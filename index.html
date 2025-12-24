@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张梁计算器 - B站风格</title>
+    <style>
+        /* B站配色系统 */
+        :root {
+            --bili-pink: #FB7299;      /* 主粉色 */
+            --bili-pink-light: #FF9DB5; /* 浅粉色 */
+            --bili-pink-dark: #E75480;  /* 深粉色 */
+            --bili-blue: #00A1D6;      /* 辅助蓝色 */
+            --bili-blue-light: #33B4DE; /* 浅蓝色 */
+            --bili-gray-100: #F6F9FA;   /* 背景灰 */
+            --bili-gray-200: #F0F3F5;   /* 卡片灰 */
+            --bili-gray-300: #E3E5E7;   /* 边框灰 */
+            --bili-gray-700: #505050;   /* 深灰文本 */
+            --bili-text: #222222;       /* 主文本色 */
+            --bili-text-light: #666666; /* 次文本色 */
+            --bili-white: #FFFFFF;      /* 白色 */
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, var(--bili-gray-100) 0%, #F9F9F9 100%);
+            color: var(--bili-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 头部区域 - B站风格 */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 20px 0;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--bili-text);
+            margin-bottom: 8px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .header-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--bili-pink) 0%, var(--bili-blue) 100%);
+            border-radius: 2px;
+        }
+
+        .header-subtitle {
+            font-size: 16px;
+            color: var(--bili-text-light);
+            margin-top: 16px;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 左侧操作面板 */
+        .operation-panel {
+            background: var(--bili-white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--bili-gray-300);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--bili-text);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--bili-gray-200);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: var(--bili-pink);
+            border-radius: 2px;
+            margin-right: 10px;
+        }
+
+        /* 输入框 - B站风格 */
+        .input-container {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--bili-text-light);
+        }
+
+        .input-label::before {
+            content: '📝';
+            margin-right: 6px;
+        }
+
+        #fangInput {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 16px;
+            color: var(--bili-text);
+            background: var(--bili-gray-100);
+            border: 2px solid var(--bili-gray-300);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        #fangInput:focus {
+            outline: none;
+            border-color: var(--bili-pink);
+            background: var(--bili-white);
+            box-shadow: 0 0 0 3px rgba(251, 114, 153, 0.1);
+        }
+
+        #fangInput:read-only {
+            cursor: default;
+            background: var(--bili-gray-100);
+            color: var(--bili-text);
+        }
+
+        /* 操作按钮 */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .bili-btn {
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .bili-btn-primary {
+            background: var(--bili-pink);
+            color: white;
+        }
+
+        .bili-btn-primary:hover {
+            background: var(--bili-pink-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .bili-btn-secondary {
+            background: var(--bili-gray-200);
+            color: var(--bili-text);
+        }
+
+        .bili-btn-secondary:hover {
+            background: var(--bili-gray-300);
+            transform: translateY(-2px);
+        }
+
+        .bili-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 扑克牌网格 */
+        .poker-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .poker-card {
+            aspect-ratio: 3/4;
+            background: var(--bili-white);
+            border: 2px solid var(--bili-gray-300);
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .poker-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--bili-pink-light);
+        }
+
+        .poker-card.red {
+            color: #FF3860;
+        }
+
+        .poker-card.black {
+            color: var(--bili-text);
+        }
+
+        .poker-card.selected {
+            background: var(--bili-pink);
+            color: white;
+            border-color: var(--bili-pink);
+            transform: translateY(-2px);
+        }
+
+        .poker-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 12px;
+            background: white;
+            color: var(--bili-pink);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* 结果展示区域 */
+        .result-display {
+            background: var(--bili-white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--bili-gray-300);
+            margin-top: 24px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--bili-pink);
+            text-align: center;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(251, 114, 153, 0.1) 0%, rgba(0, 161, 214, 0.1) 100%);
+            border-radius: var(--radius-md);
+            margin: 12px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-empty {
+            color: var(--bili-text-light);
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        .result-count {
+            text-align: center;
+            font-size: 14px;
+            color: var(--bili-text-light);
+            margin-top: 8px;
+        }
+
+        .result-count strong {
+            color: var(--bili-pink);
+            font-weight: 700;
+        }
+
+        /* 预测区域 */
+        .prediction-section {
+            background: var(--bili-gray-100);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-top: 20px;
+            border-left: 4px solid var(--bili-blue);
+        }
+
+        .prediction-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--bili-text);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prediction-title::before {
+            content: '🔮';
+            font-size: 16px;
+        }
+
+        #estimate-result {
+            font-size: 14px;
+            color: var(--bili-text);
+            line-height: 1.5;
+        }
+
+        /* 右侧结果面板 */
+        .result-panel {
+            background: var(--bili-white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--bili-gray-300);
+            max-height: 80vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 20px;
+        }
+
+        .result-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .result-panel::-webkit-scrollbar-track {
+            background: var(--bili-gray-100);
+            border-radius: 3px;
+        }
+
+        .result-panel::-webkit-scrollbar-thumb {
+            background: var(--bili-gray-300);
+            border-radius: 3px;
+        }
+
+        .result-panel::-webkit-scrollbar-thumb:hover {
+            background: var(--bili-pink-light);
+        }
+
+        /* 结果表格 */
+        .result-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 14px;
+        }
+
+        .result-table th {
+            background: var(--bili-gray-100);
+            color: var(--bili-text);
+            font-weight: 600;
+            text-align: left;
+            padding: 14px 16px;
+            border-bottom: 2px solid var(--bili-gray-300);
+            position: sticky;
+            top: 0;
+        }
+
+        .result-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--bili-gray-200);
+            color: var(--bili-text);
+        }
+
+        .result-table tr:hover {
+            background: var(--bili-gray-100);
+        }
+
+        .result-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .combo-cell {
+            font-family: 'Consolas', monospace;
+            font-weight: 500;
+            color: var(--bili-pink);
+        }
+
+        .required-cell {
+            font-weight: 700;
+            color: var(--bili-blue);
+        }
+
+        .prediction-cell {
+            font-size: 13px;
+            color: var(--bili-text-light);
+        }
+
+        .adopt-btn {
+            padding: 8px 16px;
+            background: var(--bili-pink);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .adopt-btn:hover {
+            background: var(--bili-pink-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--bili-text-light);
+        }
+
+        .empty-state::before {
+            content: '🎴';
+            font-size: 48px;
+            display: block;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 24px 0;
+            margin-top: 32px;
+            border-top: 1px solid var(--bili-gray-300);
+            color: var(--bili-text-light);
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: var(--bili-pink);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 24px;
+            }
+            
+            .main-content {
+                gap: 16px;
+            }
+            
+            .operation-panel,
+            .result-panel {
+                padding: 20px;
+            }
+            
+            .poker-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+            
+            .poker-card {
+                font-size: 16px;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header-title {
+                font-size: 20px;
+            }
+            
+            .poker-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .result-value {
+                font-size: 20px;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--bili-gray-300);
+            border-top-color: var(--bili-pink);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 通知提示 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bili-white);
+            border: 1px solid var(--bili-gray-300);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-success {
+            border-left: 4px solid var(--bili-pink);
+        }
+
+        .notification-info {
+            border-left: 4px solid var(--bili-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1 class="header-title">张梁·三十六方计算器</h1>
+            <p class="header-subtitle">选择方牌点数，实时计算可用弃牌组合</p>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 左侧操作区 -->
+            <div class="operation-panel">
+                <div class="section-title">选择方牌</div>
+                
+                <div class="input-container">
+                    <div class="input-label">当前已选方牌</div>
+                    <input type="text" id="fangInput" placeholder="点击下方牌面选择" readonly>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="bili-btn bili-btn-primary" id="clearBtn">
+                        <span>🗑️</span> 清空
+                    </button>
+                    <button class="bili-btn bili-btn-secondary" id="undoBtn">
+                        <span>↶</span> 撤回
+                    </button>
+                </div>
+
+                <!-- 扑克牌选择 -->
+                <div class="poker-grid">
+                    <button class="poker-card red" data-value="1">A</button>
+                    <button class="poker-card black" data-value="2">2</button>
+                    <button class="poker-card red" data-value="3">3</button>
+                    <button class="poker-card black" data-value="4">4</button>
+                    <button class="poker-card red" data-value="5">5</button>
+                    <button class="poker-card black" data-value="6">6</button>
+                    <button class="poker-card red" data-value="7">7</button>
+                    <button class="poker-card black" data-value="8">8</button>
+                    <button class="poker-card red" data-value="9">9</button>
+                    <button class="poker-card black" data-value="10">10</button>
+                    <button class="poker-card red" data-value="11">J</button>
+                    <button class="poker-card black" data-value="12">Q</button>
+                    <button class="poker-card red" data-value="13">K</button>
+                </div>
+
+                <!-- 结果展示 -->
+                <div class="result-display">
+                    <div class="section-title">可用弃牌点数</div>
+                    <div class="result-value" id="required-values">
+                        <span class="result-empty">请选择方牌</span>
+                    </div>
+                    <div class="result-count">
+                        共 <strong id="result-count">0</strong> 种可用组合
+                    </div>
+                </div>
+
+                <!-- 预测区域 -->
+                <div class="prediction-section">
+                    <div class="prediction-title">下一张方牌预测</div>
+                    <div id="estimate-result">选择方牌后显示预测结果</div>
+                </div>
+            </div>
+
+            <!-- 右侧结果面板 -->
+            <div class="result-panel">
+                <div class="section-title">详细组合方案</div>
+                <div id="result">
+                    <div class="empty-state">
+                        选择方牌后显示详细计算结果
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>张梁「方统」技能：弃牌点数 + 方牌点数 = 36 时，造成3点雷电伤害</p>
+            <p>基于三国杀游戏机制设计 | 仅供娱乐参考</p>
+        </div>
+    </div>
+
+    <!-- 通知 -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // 保持原有逻辑代码不变，只修改显示相关的部分
+        (function() {
+            'use strict';
+
+            const pokerMap = {
+                1: 'A', 2: '2', 3: '3', 4: '4', 5: '5',
+                6: '6', 7: '7', 8: '8', 9: '9', 10: '10',
+                11: 'J', 12: 'Q', 13: 'K'
+            };
+            const MAX_HISTORY_LENGTH = 50;
+
+            let selectedNumbers = [];
+            let historyStack = [];
+            let currentIndex = -1;
+
+            // 显示通知
+            function showNotification(message, type = 'info') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification notification-${type}`;
+                
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            // 更新扑克牌选中状态
+            function updatePokerCards() {
+                const countMap = new Map();
+                selectedNumbers.forEach(num => {
+                    countMap.set(num, (countMap.get(num) || 0) + 1);
+                });
+                
+                document.querySelectorAll('.poker-card').forEach(card => {
+                    const value = parseInt(card.dataset.value);
+                    const count = countMap.get(value) || 0;
+                    
+                    if (count > 0) {
+                        card.classList.add('selected');
+                        card.dataset.count = count;
+                    } else {
+                        card.classList.remove('selected');
+                        delete card.dataset.count;
+                    }
+                });
+            }
+
+            function calculateRemainingPredictions(usedCombo) {
+                const countMap = new Map();
+                selectedNumbers.forEach(num => {
+                    countMap.set(num, (countMap.get(num) || 0) + 1);
+                });
+
+                usedCombo.forEach(num => {
+                    if (countMap.has(num)) {
+                        countMap.set(num, Math.max(countMap.get(num) - 1, 0));
+                    }
+                });
+
+                const remaining = [];
+                countMap.forEach((count, num) => {
+                    for (let i = 0; i < count; i++) {
+                        remaining.push(num);
+                    }
+                });
+
+                const predictions = new Set();
+                
+                // 双卡组合检查
+                for (let i = 0; i < remaining.length; i++) {
+                    for (let j = i + 1; j < remaining.length; j++) {
+                        const required = 36 - (remaining[i] + remaining[j]);
+                        if (required >= 1 && required <= 13) {
+                            predictions.add(required);
+                        }
+                    }
+                }
+
+                // 多卡组合检查
+                for (let mask = 3; mask < (1 << remaining.length); mask++) {
+                    const combo = [];
+                    let sum = 0;
+                    for (let i = 0; i < remaining.length; i++) {
+                        if (mask & (1 << i)) {
+                            combo.push(remaining[i]);
+                            sum += remaining[i];
+                        }
+                    }
+                    if (combo.length < 2 || sum >= 36) continue;
+                    
+                    const required = 36 - sum;
+                    if (required >= 1 && required <= 13) {
+                        predictions.add(required);
+                    }
+                }
+                
+                return Array.from(predictions).sort((a, b) => b - a);
+            }
+
+            function calculateEstimation(baseRequirements) {
+                const estimateDiv = document.getElementById('estimate-result');
+                estimateDiv.innerHTML = "";
+
+                if (selectedNumbers.length === 0) {
+                    estimateDiv.textContent = "选择方牌后显示预测结果";
+                    return;
+                }
+
+                const percentageMap = {
+                    12: { text: "92%", color: "var(--bili-pink)" },
+                    11: { text: "85%", color: "var(--bili-blue)" },
+                    10: { text: "77%", color: "#8b5cf6" }
+                };
+
+                const countDict = {};
+                const existingKeys = new Set(baseRequirements);
+
+                for (let addCard = 1; addCard <= 13; addCard++) {
+                    const testHand = [...selectedNumbers, addCard];
+                    const solutions = new Set();
+
+                    for (let mask = 3; mask < (1 << testHand.length); mask++) {
+                        let sum = 0;
+                        const combo = [];
+                        for (let i = 0; i < testHand.length; i++) {
+                            if (mask & (1 << i)) {
+                                combo.push(testHand[i]);
+                                sum += testHand[i];
+                            }
+                        }
+                        if (combo.length < 2 || sum >= 36) continue;
+
+                        const required = 36 - sum;
+                        if (required >= 1 && required <= 13 && !existingKeys.has(required)) {
+                            solutions.add(required);
+                        }
+                    }
+
+                    solutions.forEach(sol => countDict[sol] = (countDict[sol] || 0) + 1);
+                }
+
+                const mustHave = [];
+                const probGroups = new Map();
+                Object.entries(countDict).forEach(([card, count]) => {
+                    const num = parseInt(card);
+                    const groupCount = Math.min(count, 12);
+                    
+                    if (count === 13) mustHave.push(num);
+                    else if (count >= 10) probGroups.set(groupCount, [...(probGroups.get(groupCount) || []), num]);
+                });
+
+                const output = [];
+                if (mustHave.length > 0) {
+                    output.push(`<span style="color:var(--bili-pink)">必增组合：${
+                        mustHave.sort((a,b) => b - a).map(n => pokerMap[n]).join(' ')
+                    }</span><br>`);
+                }
+
+                const probElements = [];
+                Array.from(probGroups.entries())
+                    .sort(([a], [b]) => b - a)
+                    .forEach(([count, cards]) => {
+                        probElements.push(
+                            `<span style="color:${percentageMap[count].color}">${
+                                cards.sort((a,b) => b - a).map(n => pokerMap[n]).join(' ')
+                            } <strong>${percentageMap[count].text}</strong></span>`
+                        );
+                    });
+
+                if (probElements.length > 0) {
+                    output.push(`可能新增：${probElements.join(' ')}`);
+                }
+
+                estimateDiv.innerHTML = output.length > 0 
+                    ? output.join("") 
+                    : '<span style="color:var(--bili-text-light)">暂无新增预测</span>';
+            }
+
+            function calculate() {
+                const estimateDiv = document.getElementById('estimate-result');
+                const requiredValuesDiv = document.getElementById('required-values');
+                const resultCountDiv = document.getElementById('result-count');
+
+                if (selectedNumbers.length === 0) {
+                    updateRequiredDisplay(new Set());
+                    updateResultTable([]);
+                    requiredValuesDiv.innerHTML = '<span class="result-empty">请选择方牌</span>';
+                    resultCountDiv.textContent = '0';
+                    estimateDiv.textContent = "选择方牌后显示预测结果";
+                    return;
+                }
+
+                const totalSum = selectedNumbers.reduce((a, b) => a + b, 0);
+                if (totalSum < 23) {
+                    updateRequiredDisplay(new Set());
+                    updateResultTable([]);
+                    requiredValuesDiv.innerHTML = '<span class="result-empty">点数不足</span>';
+                    resultCountDiv.textContent = '0';
+                    estimateDiv.textContent = "继续添加方牌";
+                    return;
+                }
+
+                const validCombinations = [];
+                const seen = new Set();
+                const allRequired = new Set();
+
+                for (let mask = 3; mask < (1 << selectedNumbers.length); mask++) {
+                    const combo = [];
+                    let sum = 0;
+                    for (let i = 0; i < selectedNumbers.length; i++) {
+                        if (mask & (1 << i)) {
+                            combo.push(selectedNumbers[i]);
+                            sum += selectedNumbers[i];
+                        }
+                    }
+                    if (combo.length < 2 || sum >= 36) continue;
+
+                    const required = 36 - sum;
+                    if (required < 1 || required > 13) continue;
+
+                    allRequired.add(required);
+                    const predictions = calculateRemainingPredictions(combo);
+
+                    const sortedCombo = [...combo].sort((a, b) => a - b);
+                    const key = `${sortedCombo.join(',')}|${required}`;
+                    
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        validCombinations.push({ 
+                            combo: sortedCombo, 
+                            required, 
+                            predictions 
+                        });
+                    }
+                }
+
+                validCombinations.sort((a, b) => b.required - a.required);
+                updateRequiredDisplay(allRequired);
+                updateResultTable(validCombinations);
+                calculateEstimation(allRequired);
+                
+                // 更新结果计数
+                resultCountDiv.textContent = allRequired.size;
+                
+                // 更新可用弃牌显示
+                if (allRequired.size > 0) {
+                    requiredValuesDiv.textContent = Array.from(allRequired)
+                        .sort((a,b) => b - a)
+                        .map(n => pokerMap[n])
+                        .join(' ');
+                } else {
+                    requiredValuesDiv.innerHTML = '<span class="result-empty">无可用组合</span>';
+                }
+            }
+
+            function updateRequiredDisplay(requiredSet) {
+                // 已经在calculate中更新
+            }
+
+            function updateResultTable(combinations) {
+                const resultDiv = document.getElementById("result");
+                
+                if (combinations.length > 0) {
+                    const table = document.createElement('table');
+                    table.className = 'result-table';
+                    
+                    const thead = document.createElement('thead');
+                    thead.innerHTML = `
+                        <tr>
+                            <th>方牌组合</th>
+                            <th>需弃牌</th>
+                            <th>剩余预测</th>
+                            <th>操作</th>
+                        </tr>
+                    `;
+                    table.appendChild(thead);
+                    
+                    const tbody = document.createElement('tbody');
+                    
+                    combinations.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="combo-cell">${item.combo.map(n => pokerMap[n]).join('+')}</td>
+                            <td class="required-cell">${pokerMap[item.required]}</td>
+                            <td class="prediction-cell">${item.predictions.map(n => pokerMap[n]).join(' ') || "无"}</td>
+                            <td>
+                                <button class="adopt-btn" data-combo='${JSON.stringify(item.combo)}'>
+                                    采用
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                    
+                    table.appendChild(tbody);
+                    resultDiv.innerHTML = '';
+                    resultDiv.appendChild(table);
+                    
+                    // 事件委托
+                    table.addEventListener('click', (e) => {
+                        const button = e.target.closest('.adopt-btn');
+                        if (button) {
+                            try {
+                                const combo = JSON.parse(button.dataset.combo);
+                                adoptCombination(combo);
+                                showNotification('已采用该组合', 'success');
+                            } catch (error) {
+                                console.error('数据解析错误:', error);
+                            }
+                        }
+                    });
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="empty-state">
+                            当前方牌无法组成有效组合<br>
+                            <small style="color:var(--bili-text-light); margin-top:8px; display:block;">
+                                继续添加方牌或尝试不同组合
+                            </small>
+                        </div>
+                    `;
+                }
+            }
+
+            function updateInputDisplay() {
+                document.getElementById('fangInput').value = 
+                    selectedNumbers.map(n => pokerMap[n]).join(' ');
+            }
+
+            function adoptCombination(usedNumbers) {
+                const countMap = new Map();
+                selectedNumbers.forEach(num => {
+                    countMap.set(num, (countMap.get(num) || 0) + 1);
+                });
+
+                usedNumbers.forEach(num => {
+                    if (countMap.has(num)) {
+                        countMap.set(num, Math.max(countMap.get(num) - 1, 0));
+                    }
+                });
+
+                const remaining = [];
+                countMap.forEach((count, num) => {
+                    for (let i = 0; i < count; i++) {
+                        remaining.push(num);
+                    }
+                });
+
+                if (currentIndex < historyStack.length - 1) {
+                    historyStack = historyStack.slice(0, currentIndex + 1);
+                }
+                historyStack.push(remaining);
+                if (historyStack.length > MAX_HISTORY_LENGTH) {
+                    historyStack.shift();
+                    currentIndex = Math.max(currentIndex - 1, -1);
+                }
+                currentIndex = historyStack.length - 1;
+                selectedNumbers = remaining;
+                
+                updateViews();
+            }
+
+            function updateViews() {
+                updateInputDisplay();
+                updatePokerCards();
+                calculate();
+            }
+
+            function initEventListeners() {
+                // 扑克牌点击
+                document.querySelectorAll('.poker-card').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const value = parseInt(this.dataset.value);
+                        const newSelected = [...selectedNumbers, value];
+                        
+                        if (currentIndex < historyStack.length - 1) {
+                            historyStack = historyStack.slice(0, currentIndex + 1);
+                        }
+                        historyStack.push(newSelected);
+                        currentIndex = historyStack.length - 1;
+                        selectedNumbers = newSelected;
+                        
+                        updateViews();
+                    });
+                });
+
+                // 清空按钮
+                document.getElementById('clearBtn').addEventListener('click', () => {
+                    if (selectedNumbers.length === 0) return;
+                    
+                    if (currentIndex < historyStack.length - 1) {
+                        historyStack = historyStack.slice(0, currentIndex + 1);
+                    }
+                    historyStack.push([]);
+                    currentIndex = historyStack.length - 1;
+                    selectedNumbers = [];
+                    updateViews();
+                    
+                    showNotification('已清空所有方牌', 'info');
+                });
+
+                // 撤回按钮
+                document.getElementById('undoBtn').addEventListener('click', () => {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        selectedNumbers = [...historyStack[currentIndex]];
+                        updateViews();
+                        showNotification('已撤回上一步操作', 'info');
+                    } else if (currentIndex === 0) {
+                        currentIndex = -1;
+                        selectedNumbers = [];
+                        historyStack = [];
+                        updateViews();
+                        showNotification('已重置', 'info');
+                    } else {
+                        showNotification('没有可撤回的操作', 'info');
+                    }
+                });
+            }
+
+            function init() {
+                initEventListeners();
+                updateViews();
+                
+                // 加载示例数据
+                setTimeout(() => {
+                    // 自动加载一个示例
+                    selectedNumbers = [11, 10, 3, 5];
+                    updateViews();
+                }, 500);
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
+</body>
+</html>
