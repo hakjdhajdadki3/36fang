@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>张梁计算器专业版 v5.2.5</title>
+    <title>张梁计算器专业版 v5.2.6</title>
     <style>
         :root {
             --primary-50: #F5F4FF;
@@ -36,7 +36,6 @@
             overflow-x: hidden;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            /* 神来之笔：让页面即使没内容也能弹弹乐 */
             min-height: 100vh;
             box-sizing: border-box;
         }
@@ -44,10 +43,18 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: minmax(300px, 1.1fr) minmax(250px, 0.9fr);
+            display: flex;
+            flex-direction: column;
             gap: var(--space-3);
             align-items: start;
+        }
+
+        /* 桌面端 / 宽屏：双列布局 */
+        @media (min-width: 769px) {
+            .container {
+                display: grid;
+                grid-template-columns: minmax(300px, 1.1fr) minmax(250px, 0.9fr);
+            }
         }
 
         .result-panel {
@@ -56,6 +63,8 @@
             padding: var(--space-3);
             box-shadow: 0 12px 32px -8px rgba(0,0,0,0.08);
             border: 1px solid rgba(0,0,0,0.05);
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .operate-panel {
@@ -64,6 +73,7 @@
             padding: var(--space-3);
             box-shadow: 0 8px 24px -6px rgba(100, 81, 241, 0.12), 0 0 0 1px rgba(0,0,0,0.05);
             max-width: 100%;
+            width: 100%;
             box-sizing: border-box;
         }
 
@@ -276,11 +286,12 @@
             transform: none;
         }
 
+        /* 平板竖屏 / 小窗：单列但保留较大的内边距 */
         @media (max-width: 768px) {
-            body { padding: var(--space-2) 0; overflow-x: hidden; }
-            .container { display: flex; flex-direction: column; gap: var(--space-2); padding: 0 var(--space-2); width: 100%; max-width: 100%; box-sizing: border-box; }
-            .result-panel { order: 2; width: 100%; margin: 0; padding: var(--space-2); box-shadow: 0 4px 16px -4px rgba(0,0,0,0.1); box-sizing: border-box; }
-            .operate-panel { padding: var(--space-2); width: 100%; box-sizing: border-box; }
+            body { padding: var(--space-2) 0; }
+            .container { padding: 0 var(--space-2); }
+            .result-panel { order: 2; padding: var(--space-2); }
+            .operate-panel { padding: var(--space-2); }
             .poker-grid { gap: 6px; }
             .poker-btn { font-size: clamp(0.8rem, 5vw, 1.125rem); border-radius: 12px; }
             .result-table th, .result-table td { padding: 0.7rem 0.3rem; font-size: 0.75rem; }
@@ -289,12 +300,6 @@
             .adopt-btn { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
         }
 
-        @media (orientation: landscape) and (max-height: 600px) {
-            .container { display: flex; flex-direction: column; }
-        }
-        @media (orientation: landscape) and (min-height: 601px) {
-            .container { display: grid; grid-template-columns: 1fr 1fr; }
-        }
         @media (max-width: 360px) {
             .poker-grid { gap: 4px; }
             .poker-btn { font-size: clamp(0.7rem, 6vw, 0.9rem); border-radius: 10px; }
