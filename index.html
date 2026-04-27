@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>张梁计算器专业版 v5.2.9</title>
+    <title>张梁计算器专业版 v5.3.0</title>
     <style>
         :root {
             --primary-500: #6451F1;
@@ -13,6 +13,7 @@
             --surface-200: #F8F9FC;
             --surface-300: #EFF1F6;
             --text-primary: #1A1C22;
+            --text-placeholder: #8e8e93;
             --space-1: 0.5rem;
             --space-2: 1rem;
             --space-3: 1.5rem;
@@ -70,6 +71,7 @@
             box-sizing: border-box;
         }
 
+        /* ★ 修复1：方区文字颜色 */
         #fangDisplay {
             width: 100%;
             min-height: 58px;
@@ -88,6 +90,12 @@
             align-items: center;
             justify-content: center;
             user-select: none;
+            color: var(--text-primary);
+        }
+
+        #fangDisplay:empty::before,
+        #fangDisplay.placeholder {
+            color: var(--text-placeholder);
         }
 
         .action-buttons {
@@ -124,17 +132,25 @@
         .action-btn:active { transform: scale(0.96); }
 
         #required-section { margin: var(--space-2) 0; text-align: center; }
+
+        /* ★ 修复2：Key区字体大小和间距 */
         #required-cards {
-            font-size: 1.1rem; font-weight: 600; color: var(--primary-500);
-            display: flex; align-items: center; gap: 0; justify-content: center;
-            flex-wrap: wrap; word-break: break-word;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-500);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            word-break: break-word;
+            letter-spacing: 0.5px;
         }
 
         #estimate-section { margin: var(--space-2) 0; text-align: left; font-size: 0.9rem; display: none; }
         #estimate-section.visible { display: block; }
         #estimate-result { line-height: 1.8; word-break: break-word; }
 
-        /* ★ 核心修改：放弃 aspect-ratio，改用 padding-bottom 创建正方形 */
         .poker-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -315,7 +331,14 @@
         }
 
         function updateDisplay() {
-            document.getElementById('fangDisplay').textContent = selectedNumbers.length === 0 ? '请选择方牌' : selectedNumbers.map(n => pokerMap[n]).join(' ');
+            const display = document.getElementById('fangDisplay');
+            if (selectedNumbers.length === 0) {
+                display.textContent = '请选择方牌';
+                display.style.color = 'var(--text-placeholder)';
+            } else {
+                display.textContent = selectedNumbers.map(n => pokerMap[n]).join(' ');
+                display.style.color = 'var(--text-primary)';
+            }
         }
 
         function calculate() {
