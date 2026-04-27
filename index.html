@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>张梁计算器专业版 v5.2.10</title>
+    <title>张梁计算器专业版 v5.2.9</title>
     <style>
         :root {
             --primary-500: #6451F1;
@@ -134,6 +134,7 @@
         #estimate-section.visible { display: block; }
         #estimate-result { line-height: 1.8; word-break: break-word; }
 
+        /* ★ 核心修改：放弃 aspect-ratio，改用 padding-bottom 创建正方形 */
         .poker-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -151,7 +152,7 @@
         .poker-btn {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 8px;            /* ★ 缩小圆角，告别鹅卵石 */
+            border-radius: 16px;
             font-weight: 700;
             cursor: pointer;
             border: 1px solid;
@@ -199,7 +200,7 @@
             .result-panel { order: 2; padding: var(--space-2); }
             .operate-panel { padding: var(--space-2); }
             .poker-grid { gap: 6px; }
-            .poker-btn { font-size: clamp(0.8rem, 5vw, 1.125rem); border-radius: 6px; }
+            .poker-btn { font-size: clamp(0.8rem, 5vw, 1.125rem); border-radius: 12px; }
             .result-table th, .result-table td { padding: 0.7rem 0.3rem; font-size: 0.75rem; }
             .result-table td:first-child { font-size: 0.8rem; }
             .result-table td:nth-child(2) { font-size: 0.9rem; }
@@ -208,7 +209,7 @@
 
         @media (max-width: 360px) {
             .poker-grid { gap: 4px; }
-            .poker-btn { font-size: clamp(0.7rem, 6vw, 0.9rem); border-radius: 4px; }
+            .poker-btn { font-size: clamp(0.7rem, 6vw, 0.9rem); border-radius: 10px; }
             .result-table th, .result-table td { padding: 0.5rem 0.2rem; font-size: 0.7rem; }
         }
     </style>
