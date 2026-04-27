@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>张梁计算器专业版 v5.2.7</title>
+    <title>张梁计算器专业版 v5.2.8</title>
     <style>
         :root {
             --primary-50: #F5F4FF;
@@ -170,14 +170,13 @@
             grid-template-columns: repeat(7, 1fr);
             gap: var(--space-1);
             max-width: 100%;
-            overflow: hidden; /* 防止网格自身溢出 */
         }
 
         .poker-btn {
             aspect-ratio: 1 / 1;
-            width: 100%;          /* 强制填满网格单元格 */
-            height: auto;         /* 让高度自动跟随宽度 */
-            max-width: 100%;      /* 防止内容撑开 */
+            /* 关键：让按钮完全服从网格，不自行撑大 */
+            min-width: 0;
+            min-height: 0;
             border-radius: 16px;
             font-weight: 700;
             cursor: pointer;
@@ -190,7 +189,6 @@
             font-size: 1.125rem;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
-            min-width: 0;
             overflow: hidden;
             white-space: nowrap;
         }
