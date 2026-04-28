@@ -1,432 +1,406 @@
 <!DOCTYPE html>
-<html lang="zh-CN" style="touch-action: manipulation;">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>张梁计算器专业版 v5.3.0</title>
+    <title>方统 · 极简 v9.3.2</title>
     <style>
-        :root {
-            --primary-500: #6451F1;
-            --primary-600: #4838D1;
-            --error-500: #FF4D4D;
-            --surface-100: #FFFFFF;
-            --surface-200: #F8F9FC;
-            --surface-300: #EFF1F6;
-            --text-primary: #1A1C22;
-            --text-placeholder: #8e8e93;
-            --space-1: 0.5rem;
-            --space-2: 1rem;
-            --space-3: 1.5rem;
-            --space-4: 2rem;
-        }
-
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--surface-200);
-            color: var(--text-primary);
-            line-height: 1.6;
-            margin: 0;
-            padding: var(--space-4) var(--space-2);
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            min-height: 100vh;
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
-            align-items: start;
+        :root {
+            --bg-primary: #f5f5f7;
+            --bg-card: rgba(255, 255, 255, 0.72);
+            --bg-input: rgba(0, 0, 0, 0.025);
+            --bg-button: rgba(255, 255, 255, 0.45);
+            --bg-button-key: rgba(0, 113, 227, 0.08);
+            --color-primary: #0071e3;
+            --color-primary-dark: #005bb5;
+            --color-text: #1d1d1f;
+            --color-text-dim: #aeaeb2;
+            --color-secondary: #86868b;
+            --color-border: rgba(0, 0, 0, 0.06);
+            --shadow-card: 0 20px 40px -12px rgba(0,0,0,0.06);
+            --shadow-button: 0 4px 10px -4px rgba(0,0,0,0.04);
+            --shadow-button-hover: 0 12px 20px -8px rgba(0,0,0,0.08);
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-quick: all 0.08s;
+            --transition-fill: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius-lg: 40px;
+            --radius-md: 30px;
+            --radius-sm: 24px;
         }
 
-        @media (min-width: 769px) {
-            .container {
-                display: grid;
-                grid-template-columns: minmax(300px, 1.1fr) minmax(250px, 0.9fr);
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #000000;
+                --bg-card: rgba(28, 28, 30, 0.72);
+                --bg-input: rgba(255, 255, 255, 0.06);
+                --bg-button: rgba(255, 255, 255, 0.08);
+                --bg-button-key: rgba(68, 153, 255, 0.1);
+                --color-primary: #4499ff;
+                --color-primary-dark: #6db3f2;
+                --color-text: #f5f5f7;
+                --color-text-dim: #636366;
+                --color-secondary: #aeaeb2;
+                --color-border: rgba(255, 255, 255, 0.08);
+                --shadow-card: 0 20px 40px -12px rgba(0,0,0,0.4);
+                --shadow-button: 0 4px 10px -4px rgba(0,0,0,0.3);
+                --shadow-button-hover: 0 12px 20px -8px rgba(0,0,0,0.5);
             }
         }
 
-        .result-panel {
-            background: var(--surface-100);
-            border-radius: var(--space-2);
-            padding: var(--space-3);
-            box-shadow: 0 12px 32px -8px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .operate-panel {
-            background: var(--surface-100);
-            border-radius: var(--space-2);
-            padding: var(--space-3);
-            box-shadow: 0 8px 24px -6px rgba(100, 81, 241, 0.12);
-            max-width: 100%;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        /* ★ 修复1：方区文字颜色 */
-        #fangDisplay {
-            width: 100%;
-            min-height: 58px;
-            padding: var(--space-2);
-            border: 1px solid var(--surface-300);
-            border-radius: 14px;
-            font-size: 1rem;
-            background: var(--surface-200);
-            text-align: center;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            word-break: break-word;
-            line-height: 1.5;
-            box-sizing: border-box;
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 24px 16px;
+            background: var(--bg-primary);
+            color: var(--color-text);
+            transition: background 0.4s ease, color 0.4s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .tool {
+            max-width: 540px;
+            width: 100%;
+            background: var(--bg-card);
+            backdrop-filter: blur(60px) saturate(180%);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            padding: 32px 24px 34px;
+            transition: background 0.4s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .fang-display, .grid-btn, .results-table th, .results-table td, .check-btn {
             user-select: none;
-            color: var(--text-primary);
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
-        #fangDisplay:empty::before,
-        #fangDisplay.placeholder {
-            color: var(--text-placeholder);
-        }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-1);
-            margin: var(--space-3) 0;
-        }
-
-        .action-btn {
-            padding: var(--space-1) var(--space-2);
-            border-radius: 14px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: var(--space-1);
+        .grid-btn, .check-btn {
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
         }
 
-        #clearBtn {
-            background: linear-gradient(180deg, var(--error-500) 0%, #FF3636 100%);
-            color: white;
-        }
-
-        #undoBtn {
-            background: linear-gradient(180deg, var(--primary-500) 0%, var(--primary-600) 100%);
-            color: white;
-        }
-
-        .action-btn:active { transform: scale(0.96); }
-
-        #required-section { margin: var(--space-2) 0; text-align: center; }
-
-        /* ★ 修复2：Key区字体大小和间距 */
-        #required-cards {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--primary-500);
+        .fang-display {
+            width: 100%;
+            min-height: 56px;
+            padding: 12px 20px;
+            font-size: 1.15rem;
+            font-weight: 520;
+            font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+            background: var(--bg-input);
+            border: none;
+            border-radius: var(--radius-md);
+            color: var(--color-text);
+            letter-spacing: 1.5px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+            cursor: default;
             display: flex;
             align-items: center;
-            gap: 4px;
             justify-content: center;
-            flex-wrap: wrap;
+            text-align: center;
+            line-height: 1.5;
             word-break: break-word;
-            letter-spacing: 0.5px;
+            transition: box-shadow 0.3s ease;
+            overflow: hidden;
         }
 
-        #estimate-section { margin: var(--space-2) 0; text-align: left; font-size: 0.9rem; display: none; }
-        #estimate-section.visible { display: block; }
-        #estimate-result { line-height: 1.8; word-break: break-word; }
-
-        .poker-grid {
+        .point-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: var(--space-1);
+            gap: 8px;
+            margin: 8px 0 24px;
             max-width: 100%;
         }
 
-        .poker-cell {
-            position: relative;
-            width: 100%;
-            height: 0;
-            padding-bottom: 100%;
-        }
-
-        .poker-btn {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            border: 1px solid;
-            background: var(--surface-100);
-            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+        .grid-btn {
+            aspect-ratio: 1 / 1;
+            background: var(--bg-button);
+            border: none;
+            color: var(--color-text);
+            font-size: clamp(0.9rem, 4vw, 1.25rem);
+            font-weight: 520;
+            border-radius: var(--radius-sm);
+            transition: var(--transition-smooth);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.125rem;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'SF Mono', 'Menlo', monospace;
+            box-shadow: var(--shadow-button);
+            backdrop-filter: blur(10px);
+            line-height: 1;
+            min-width: 0;
             overflow: hidden;
             white-space: nowrap;
+            flex-shrink: 1;
+            position: relative;
         }
 
-        .poker-btn.red { color: var(--error-500); border-color: rgba(255, 77, 77, 0.2); }
-        .poker-btn.black { color: var(--text-primary); border-color: rgba(0,0,0,0.1); }
-        .poker-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px -2px rgba(0,0,0,0.1); background: var(--surface-200); }
-        .poker-btn:active { transform: scale(0.94); }
-
-        .result-table { width: 100%; border-collapse: collapse; background: var(--surface-100); border-radius: 14px; overflow: hidden; }
-        .result-table th {
-            background: linear-gradient(180deg, var(--primary-500) 0%, var(--primary-600) 100%);
-            color: white; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;
-            padding: var(--space-2); text-align: center; letter-spacing: 0.05em; white-space: nowrap;
-        }
-        .result-table td { padding: var(--space-2); text-align: center; border-bottom: 1px solid var(--surface-300); font-weight: 500; word-break: break-word; }
-        .result-table tr:last-child td { border-bottom: none; }
-        .result-table td:first-child { font-family: 'SF Mono', 'Menlo', monospace; letter-spacing: 0.5px; font-size: 0.9rem; }
-        .result-table td:nth-child(2) { font-weight: 600; color: var(--primary-500); font-size: 1.1rem; }
-
-        .adopt-btn {
-            padding: var(--space-1) var(--space-2); border-radius: 10px;
-            background: var(--primary-500); color: white; border: none; font-weight: 500;
-            cursor: pointer; transition: all 0.2s; touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent; white-space: nowrap;
-        }
-        .adopt-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .adopt-btn:active { transform: scale(0.94); }
-        .adopt-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        @media (max-width: 768px) {
-            body { padding: var(--space-2) 0; }
-            .container { padding: 0 var(--space-2); }
-            .result-panel { order: 2; padding: var(--space-2); }
-            .operate-panel { padding: var(--space-2); }
-            .poker-grid { gap: 6px; }
-            .poker-btn { font-size: clamp(0.8rem, 5vw, 1.125rem); border-radius: 12px; }
-            .result-table th, .result-table td { padding: 0.7rem 0.3rem; font-size: 0.75rem; }
-            .result-table td:first-child { font-size: 0.8rem; }
-            .result-table td:nth-child(2) { font-size: 0.9rem; }
-            .adopt-btn { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+        .grid-btn::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0%;
+            background: var(--color-primary);
+            opacity: 0.12;
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+            z-index: 0;
+            transition: var(--transition-fill), opacity 0.3s ease;
         }
 
-        @media (max-width: 360px) {
-            .poker-grid { gap: 4px; }
-            .poker-btn { font-size: clamp(0.7rem, 6vw, 0.9rem); border-radius: 10px; }
-            .result-table th, .result-table td { padding: 0.5rem 0.2rem; font-size: 0.7rem; }
+        .grid-btn .btn-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .grid-btn.key-available {
+            background: var(--bg-button-key);
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .grid-btn.key-unavailable {
+            opacity: 0.45;
+            color: var(--color-text-dim);
+        }
+
+        .grid-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-button-hover);
+        }
+
+        .grid-btn:active {
+            transform: scale(0.96);
+            transition: var(--transition-quick);
+        }
+
+        .grid-btn.key-selected {
+            box-shadow: 0 0 0 2px var(--color-primary), var(--shadow-button);
+            color: var(--color-primary-dark);
+            font-weight: 650;
+            background: rgba(0, 113, 227, 0.12);
+        }
+        .grid-btn.key-selected:hover {
+            box-shadow: 0 0 0 2px var(--color-primary), var(--shadow-button-hover);
+        }
+
+        .undo-btn {
+            font-weight: 380;
+            background: var(--bg-button) !important;
+            color: var(--color-text) !important;
+            opacity: 1 !important;
+            box-shadow: var(--shadow-button) !important;
+        }
+        .undo-btn::before { display: none; }
+
+        .table-wrapper { margin-top: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .results-table { width: 100%; border-collapse: collapse; min-width: auto; }
+        .results-table th {
+            text-align: left; font-weight: 480; font-size: 0.7rem;
+            color: var(--color-secondary); padding: 0 0 10px 0;
+            border-bottom: 0.5px solid var(--color-border); letter-spacing: 0.8px; text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .results-table td {
+            padding: 14px 0; border-bottom: 0.5px solid rgba(0,0,0,0.03);
+            vertical-align: middle; transition: color 0.2s ease; color: var(--color-text);
+        }
+        @media (prefers-color-scheme: dark) {
+            .results-table td { border-bottom-color: rgba(255,255,255,0.04); }
+        }
+        .results-table tr.selected td { color: var(--color-primary); }
+        .results-table tr.selected .discard-col { color: var(--color-primary-dark); }
+        .results-table tr:last-child td { border-bottom: none; }
+        .discard-col { font-weight: 600; color: var(--color-primary); font-size: clamp(1rem, 4vw, 1.2rem); width: 44px; padding-right: 6px; white-space: nowrap; }
+        .combo-col { font-family: 'SF Mono', 'Menlo', monospace; font-size: clamp(0.8rem, 3.5vw, 0.95rem); letter-spacing: 0.5px; word-break: break-word; padding-right: 6px; }
+        .remain-key-col { font-family: 'SF Mono', 'Menlo', monospace; font-size: clamp(0.7rem, 3vw, 0.85rem); color: var(--color-primary); letter-spacing: 0.3px; padding-right: 0; white-space: nowrap; font-weight: 500; }
+        .action-col { width: 48px; padding-right: 0; white-space: nowrap; }
+
+        .check-btn {
+            width: 42px; height: 42px; border-radius: 21px;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--bg-button); border: none; color: var(--color-primary);
+            font-size: 1.7rem; font-weight: 320; cursor: pointer;
+            transition: var(--transition-smooth); line-height: 1;
+            box-shadow: var(--shadow-button); backdrop-filter: blur(10px); flex-shrink: 0;
+        }
+        .check-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-button-hover); }
+        .check-btn:active { transform: scale(0.94); transition: var(--transition-quick); }
+        .check-btn.active-feedback { background: var(--color-primary); color: white; }
+
+        @media (orientation: landscape) and (min-height: 400px) {
+            body { padding: 16px 12px; }
+            .tool {
+                max-width: 900px; display: grid;
+                grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto;
+                grid-template-areas: "table fang" "table buttons" "table .";
+                gap: 0 20px; padding: 20px 16px; overflow: hidden;
+            }
+            .table-wrapper { grid-area: table; margin-top: 0; max-height: 75vh; overflow-y: auto; scrollbar-width: thin; }
+            .fang-display { grid-area: fang; margin-bottom: 16px; }
+            .point-grid { grid-area: buttons; margin: 4px 0 16px; }
+            .results-table td { padding: 12px 0; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="result-panel">
-            <div id="result"></div>
-        </div>
-        <div class="operate-panel">
-            <div id="fangDisplay">请选择方牌</div>
-            <div class="action-buttons">
-                <button class="action-btn" id="clearBtn" aria-label="清空并重置历史">清空</button>
-                <button class="action-btn" id="undoBtn" aria-label="撤回上一步">撤回</button>
-            </div>
-            <div id="required-section" role="status" aria-live="polite">
-                <div id="required-cards"><span id="required-values">请先选择方牌</span></div>
-            </div>
-            <div id="estimate-section" role="status" aria-live="polite">
-                <div id="estimate-result"></div>
-            </div>
-            <div class="poker-grid" role="group" aria-label="扑克牌点数选择">
-                <div class="poker-cell"><button class="poker-btn red" data-value="1" aria-label="点数 A">A</button></div>
-                <div class="poker-cell"><button class="poker-btn black" data-value="2" aria-label="点数 2">2</button></div>
-                <div class="poker-cell"><button class="poker-btn red" data-value="3" aria-label="点数 3">3</button></div>
-                <div class="poker-cell"><button class="poker-btn black" data-value="4" aria-label="点数 4">4</button></div>
-                <div class="poker-cell"><button class="poker-btn red" data-value="5" aria-label="点数 5">5</button></div>
-                <div class="poker-cell"><button class="poker-btn black" data-value="6" aria-label="点数 6">6</button></div>
-                <div class="poker-cell"><button class="poker-btn red" data-value="7" aria-label="点数 7">7</button></div>
-                <div class="poker-cell"><button class="poker-btn black" data-value="8" aria-label="点数 8">8</button></div>
-                <div class="poker-cell"><button class="poker-btn red" data-value="9" aria-label="点数 9">9</button></div>
-                <div class="poker-cell"><button class="poker-btn black" data-value="10" aria-label="点数 10">10</button></div>
-                <div class="poker-cell"><button class="poker-btn red" data-value="11" aria-label="点数 J">J</button></div>
-                <div class="poker-cell"><button class="poker-btn black" data-value="12" aria-label="点数 Q">Q</button></div>
-                <div class="poker-cell"><button class="poker-btn red" data-value="13" aria-label="点数 K">K</button></div>
-            </div>
-        </div>
+    <div class="tool">
+        <div class="fang-display" id="fangDisplay" title="双击清空所有方牌"></div>
+        <div class="point-grid" id="buttonGrid"></div>
+        <div class="table-wrapper" id="tableWrapper"></div>
     </div>
-<script>
-    (function() {
-        'use strict';
-        const pokerMap = {1:'A',2:'2',3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',10:'10',11:'J',12:'Q',13:'K'};
-        const MAX_HISTORY_LENGTH = 50, MAX_FANG = 24, TARGET = 36;
-        let selectedNumbers = [], historyStack = [], currentIndex = -1;
 
-        function getAllSubsetSums(arr) {
-            const sorted = [...arr].sort((a,b)=>a-b), results = new Map(), n = sorted.length;
-            function backtrack(start, sum, len) {
-                if (sum > TARGET) return;
-                if (len >= 2 && sum < TARGET) results.set(sum, (results.get(sum)||0)+1);
-                for (let i = start; i < n; i++) {
-                    if (i > start && sorted[i] === sorted[i-1]) continue;
-                    backtrack(i+1, sum + sorted[i], len + 1);
-                }
+    <script>
+        (() => {
+            const MAX_FANG = 24, MAX_HISTORY = 30;
+            const POINT_MAP = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+            const PREDICT_CONFIG = [
+                { label: '必增', minCount: 13 }, { label: '≥80%', minCount: 11 }, { label: '≥50%', minCount: 7 }
+            ];
+
+            let fangArray = [], historyStack = [];
+            const fangDisplay = document.getElementById('fangDisplay');
+            const buttonGrid = document.getElementById('buttonGrid');
+            const tableWrapper = document.getElementById('tableWrapper');
+
+            const formatPoint = (p) => POINT_MAP[p-1]||p;
+            const formatFangArray = (arr) => arr.map(formatPoint).join(' ');
+
+            function updateDisplay() {
+                fangDisplay.textContent = fangArray.length ? formatFangArray(fangArray) : '';
             }
-            backtrack(0, 0, 0);
-            return results;
-        }
 
-        function getValidKeys(fangs) {
-            const sums = getAllSubsetSums(fangs), keys = new Set();
-            for (let d = 1; d <= 13; d++) { if (sums.has(TARGET - d)) keys.add(d); }
-            return Array.from(keys).sort((a,b)=>b-a);
-        }
+            function pushHistory() { historyStack.push([...fangArray]); if(historyStack.length>MAX_HISTORY) historyStack.shift(); }
+            function undo() { if(!historyStack.length) return; fangArray=[...historyStack.pop()]; updateDisplay(); computeAndRender(); }
+            function hardReset() { fangArray=[]; historyStack=[]; updateDisplay(); computeAndRender(); }
 
-        function getCombinations(fangs) {
-            const sorted = [...fangs].sort((a,b)=>a-b), n = sorted.length, seen = new Set(), results = [];
-            function backtrack(start, sum, combo) {
-                if (sum >= TARGET) return;
-                const required = TARGET - sum;
-                if (required >= 1 && required <= 13 && combo.length >= 2) {
-                    const sortedCombo = [...combo].sort((a,b)=>a-b), key = `${sortedCombo.join(',')}|${required}`;
-                    if (!seen.has(key)) {
-                        seen.add(key);
-                        const remaining = [...fangs];
-                        for (const v of combo) { const idx = remaining.indexOf(v); if (idx !== -1) remaining.splice(idx, 1); }
-                        results.push({ combo: sortedCombo, required, remainKeys: getValidKeys(remaining) });
+            function renderButtons() {
+                let html = '';
+                for (let i = 1; i <= 13; i++) html += `<div class="grid-btn point-btn" data-point="${i}"><span class="btn-text">${POINT_MAP[i-1]}</span></div>`;
+                html += `<div class="grid-btn undo-btn" id="undoBtn" title="撤销上一步"><span class="btn-text">←</span></div>`;
+                buttonGrid.innerHTML = html;
+                document.getElementById('undoBtn').addEventListener('click', undo);
+            }
+
+            function getSubsetsForTarget(numbers, target) {
+                const sorted=[...numbers].sort((a,b)=>a-b), solutions=[], n=sorted.length;
+                function backtrack(start, subset, sum) {
+                    if(sum===target){solutions.push([...subset]);return;} if(sum>target)return;
+                    for(let i=start;i<n;i++){if(sum+sorted[i]>target)break;if(i>start&&sorted[i]===sorted[i-1])continue;subset.push(sorted[i]);backtrack(i+1,subset,sum+sorted[i]);subset.pop();if(solutions.length>=60)return;}
+                }
+                backtrack(0,[],0); return solutions;
+            }
+
+            function computeKeySet(fangs) {
+                const keys=new Set(); for(let d=1;d<=13;d++){const t=36-d;if(t<0)continue;if(getSubsetsForTarget(fangs,t).length)keys.add(d);} return Array.from(keys).sort((a,b)=>a-b);
+            }
+
+            function computePrediction(currentFangs, currentKeySet) {
+                const freq=new Map();
+                for(let x=1;x<=13;x++){const nf=[...currentFangs,x];const nk=computeKeySet(nf);const added=nk.filter(k=>!currentKeySet.has(k));for(const k of added)freq.set(k,(freq.get(k)||0)+1);}
+                return freq;
+            }
+
+            function formatSubset(arr){return arr.map(formatPoint).join('·');}
+            function formatKeyDisplay(keys){
+                const count=keys.length; if(count===0)return'—'; if(count===13)return'完美';
+                const sortedDesc=[...keys].sort((a,b)=>b-a); if(count<=8)return sortedDesc.map(formatPoint).join(' ');
+                const missing=[]; for(let i=1;i<=13;i++)if(!keys.includes(i))missing.push(i);
+                return '缺：'+missing.map(formatPoint).join(' ');
+            }
+
+            function computeKeyAndGroups(fangs){
+                const discardGroups=[],availableSet=new Set();
+                for(let d=1;d<=13;d++){const t=36-d;if(t<0)continue;const subsets=getSubsetsForTarget(fangs,t);if(subsets.length){availableSet.add(d);const swr=subsets.map(sub=>{const rem=[...fangs];for(const v of sub){const i=rem.indexOf(v);if(i!==-1)rem.splice(i,1);}const rk=computeKeySet(rem);return{subset:sub,remainCount:rk.length,remainKeys:rk};});swr.sort((a,b)=>b.remainCount-a.remainCount);discardGroups.push({discard:d,subsetsWithRemain:swr});}}
+                discardGroups.sort((a,b)=>b.discard-a.discard); const currentKeys=Array.from(availableSet).sort((a,b)=>a-b);
+                return{discardGroups,currentKeys};
+            }
+
+            function buildTableHTML(discardGroups){
+                let html=`<table class="results-table"><thead><tr><th>弃</th><th>移去方</th><th>余</th><th></th></tr></thead><tbody>`;
+                let groupId=0;
+                for(const group of discardGroups){groupId++;const{discard,subsetsWithRemain}=group;const sym=formatPoint(discard),show=subsetsWithRemain.slice(0,8);for(let i=0;i<show.length;i++){const{subset,remainKeys}=show[i];const ss=JSON.stringify(subset).replace(/"/g,'&quot;');html+=`<tr data-group="${groupId}">${i===0?`<td class="discard-col" rowspan="${show.length}">${sym}</td>`:''}<td class="combo-col">${formatSubset(subset)}</td><td class="remain-key-col">${formatKeyDisplay(remainKeys)}</td><td class="action-col"><div class="check-btn" data-discard="${discard}" data-subset="${ss}">✓</div></td></tr>`;}if(subsetsWithRemain.length>8)html+=`<tr data-group="${groupId}"><td class="combo-col" colspan="3" style="opacity:0.7;font-size:0.8rem;padding-top:8px;">… 还有 ${subsetsWithRemain.length-8} 种组合</td><td></td></tr>`;}
+                html+=`</tbody></table>`; return html;
+            }
+
+            function adoptCombination(discard,subset,btn){if(btn){btn.classList.add('active-feedback');setTimeout(()=>btn.classList.remove('active-feedback'),200);}pushHistory();const nf=[...fangArray];for(const val of subset){const idx=nf.indexOf(val);if(idx!==-1)nf.splice(idx,1);}fangArray=nf;updateDisplay();computeAndRender();}
+
+            let currentSelectedGroup=null,currentSelectedDiscard=null;
+
+            function updateButtonStates(currentKeys,selectedDiscard,predictionFreq){
+                const allButtons=buttonGrid.querySelectorAll('.point-btn');
+                const keySet=new Set(currentKeys);
+                const freqMap=predictionFreq||new Map();
+                const styleId = 'fill-styles';
+                let styleEl = document.getElementById(styleId);
+                if (!styleEl) {
+                    styleEl = document.createElement('style');
+                    styleEl.id = styleId;
+                    document.head.appendChild(styleEl);
+                }
+                let cssRules = '';
+                allButtons.forEach(btn=>{
+                    if(btn.classList.contains('undo-btn')) return;
+                    const point=parseInt(btn.dataset.point,10);
+                    btn.classList.remove('key-available','key-unavailable','key-selected');
+                    const freq=freqMap.get(point)||0;
+                    const pct=freq/13;
+                    const fillHeight = pct * 100;
+                    cssRules += `.grid-btn[data-point="${point}"]::before { height: ${fillHeight}%; }`;
+                    
+                    if(selectedDiscard!==null&&point===selectedDiscard){
+                        btn.classList.add('key-selected');
+                    } else if(keySet.has(point)){
+                        btn.classList.add('key-available');
+                    } else {
+                        btn.classList.add('key-unavailable');
                     }
+                });
+                styleEl.textContent = cssRules;
+            }
+
+            function computeAndRender(){
+                if(!fangArray.length){
+                    tableWrapper.innerHTML='';
+                    const allButtons=buttonGrid.querySelectorAll('.point-btn');
+                    allButtons.forEach(btn=>{if(btn.classList.contains('undo-btn')) return;btn.classList.remove('key-available','key-unavailable','key-selected');});
+                    const styleEl = document.getElementById('fill-styles');
+                    if (styleEl) styleEl.textContent = '';
+                    currentSelectedGroup=null;currentSelectedDiscard=null;return;
                 }
-                for (let i = start; i < n; i++) {
-                    if (i > start && sorted[i] === sorted[i-1]) continue;
-                    if (sum + sorted[i] > TARGET) break;
-                    combo.push(sorted[i]); backtrack(i+1, sum + sorted[i], combo); combo.pop();
-                }
+                const{discardGroups,currentKeys}=computeKeyAndGroups(fangArray);
+                const freq=computePrediction(fangArray,new Set(currentKeys));
+                if(!discardGroups.length){tableWrapper.innerHTML='';updateButtonStates(currentKeys,null,freq);currentSelectedGroup=null;currentSelectedDiscard=null;return;}
+                tableWrapper.innerHTML=buildTableHTML(discardGroups);
+                currentSelectedGroup=null;currentSelectedDiscard=null;
+                updateButtonStates(currentKeys,null,freq);
+                const rows=tableWrapper.querySelectorAll('tr[data-group]'),groups={};
+                rows.forEach(row=>{const gid=row.getAttribute('data-group');if(!groups[gid])groups[gid]=[];groups[gid].push(row);});
+                rows.forEach(row=>{row.addEventListener('click',(e)=>{if(e.target.closest('.check-btn'))return;const groupId=row.getAttribute('data-group');if(currentSelectedGroup===groupId){groups[groupId].forEach(r=>r.classList.remove('selected'));currentSelectedGroup=null;currentSelectedDiscard=null;updateButtonStates(currentKeys,null,freq);}else{rows.forEach(r=>r.classList.remove('selected'));groups[groupId].forEach(r=>r.classList.add('selected'));currentSelectedGroup=groupId;const groupData=discardGroups[parseInt(groupId)-1];if(groupData){currentSelectedDiscard=groupData.discard;updateButtonStates(currentKeys,currentSelectedDiscard,freq);}}});});
+                tableWrapper.querySelectorAll('.check-btn').forEach(btn=>{btn.addEventListener('click',(e)=>{e.stopPropagation();const d=parseInt(btn.dataset.discard,10);const sr=btn.dataset.subset;if(!sr)return;try{adoptCombination(d,JSON.parse(sr),btn);}catch(e){}});});
             }
-            backtrack(0, 0, []);
-            results.sort((a,b) => b.required - a.required);
-            return results;
-        }
 
-        function getPrediction(fangs, currentKeys) {
-            const keySet = new Set(currentKeys), freq = new Map();
-            for (let x = 1; x <= 13; x++) {
-                const newKeys = getValidKeys([...fangs, x]);
-                for (const k of newKeys) { if (!keySet.has(k)) freq.set(k, (freq.get(k)||0)+1); }
-            }
-            const must = [], high = [];
-            for (const [k, count] of freq.entries()) {
-                if (count === 13) must.push(k);
-                else if (count >= 10) high.push({key: k, count});
-            }
-            return { must: must.sort((a,b)=>b-a), high: high.sort((a,b)=>b.count-a.count) };
-        }
+            function addFang(point){if(fangArray.length>=MAX_FANG){alert(`最多只能添加 ${MAX_FANG} 张方牌`);return;}if(point>=1&&point<=13){pushHistory();fangArray.push(point);updateDisplay();computeAndRender();}}
+            buttonGrid.addEventListener('click',(e)=>{const btn=e.target.closest('.point-btn');if(!btn)return;const point=parseInt(btn.dataset.point,10);if(!isNaN(point))addFang(point);});
+            fangDisplay.addEventListener('dblclick',(e)=>{e.preventDefault();hardReset();});
 
-        function updateDisplay() {
-            const display = document.getElementById('fangDisplay');
-            if (selectedNumbers.length === 0) {
-                display.textContent = '请选择方牌';
-                display.style.color = 'var(--text-placeholder)';
-            } else {
-                display.textContent = selectedNumbers.map(n => pokerMap[n]).join(' ');
-                display.style.color = 'var(--text-primary)';
-            }
-        }
-
-        function calculate() {
-            const estimateSection = document.getElementById('estimate-section'), estimateDiv = document.getElementById('estimate-result');
-            estimateDiv.innerHTML = '';
-            if (selectedNumbers.length === 0) { updateRequiredDisplay([]); updateResultTable([]); estimateSection.classList.remove('visible'); return; }
-            const keys = getValidKeys(selectedNumbers), combos = getCombinations(selectedNumbers), pred = getPrediction(selectedNumbers, keys);
-            updateRequiredDisplay(keys); updateResultTable(combos);
-            const output = [];
-            if (pred.must.length > 0) output.push(`<div style="color:#9C27B0">集方必增Key：${pred.must.map(n=>pokerMap[n]).join(' ')}</div>`);
-            if (pred.high.length > 0) {
-                const groups = new Map();
-                pred.high.forEach(h => { if (!groups.has(h.count)) groups.set(h.count, []); groups.get(h.count).push(h.key); });
-                const tags = [];
-                Array.from(groups.entries()).sort(([a],[b])=>b-a).forEach(([count, cards]) => {
-                    const pct = count === 12 ? '92%' : count === 11 ? '85%' : '77%';
-                    const color = count === 12 ? '#4CAF50' : count === 11 ? '#2196F3' : '#8b5cf6';
-                    tags.push(`<span style="color:${color}">${cards.sort((a,b)=>b-a).map(n=>pokerMap[n]).join(' ')} <strong>${pct}</strong></span>`);
-                });
-                output.push(`<div>集方增Key：${tags.join(' ')}</div>`);
-            }
-            if (output.length > 0) { estimateDiv.innerHTML = output.join(''); estimateSection.classList.add('visible'); }
-            else { estimateSection.classList.remove('visible'); }
-        }
-
-        function updateRequiredDisplay(keys) {
-            const valueSpan = document.getElementById('required-values');
-            if (keys.length > 0) { valueSpan.textContent = keys.map(n => pokerMap[n]).join(' '); document.getElementById('required-cards').style.color = 'var(--primary-500)'; }
-            else { valueSpan.textContent = "无有效组合"; document.getElementById('required-cards').style.color = 'var(--error-500)'; }
-        }
-
-        function updateResultTable(combinations) {
-            const resultDiv = document.getElementById("result");
-            if (combinations.length > 0) {
-                const tbody = document.createElement('tbody');
-                combinations.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${item.combo.map(n => pokerMap[n]).join('+')}</td><td>${pokerMap[item.required]}</td><td>${item.remainKeys.map(n => pokerMap[n]).join(' ') || "无"}</td><td><button class="adopt-btn" data-combo='${JSON.stringify(item.combo)}'>采用</button></td>`;
-                    tbody.appendChild(tr);
-                });
-                resultDiv.innerHTML = `<table class="result-table"><thead><tr><th>组合</th><th>需要</th><th>预测</th><th>操作</th></tr></thead></table>`;
-                resultDiv.querySelector('table').appendChild(tbody);
-                resultDiv.querySelector('table').addEventListener('click', (e) => {
-                    const btn = e.target.closest('.adopt-btn');
-                    if (btn) { btn.disabled = true; try { adoptCombination(JSON.parse(btn.dataset.combo)); } catch(e) { btn.disabled = false; } }
-                });
-            } else {
-                resultDiv.innerHTML = `<div style="color:var(--error-500); padding:var(--space-2); text-align:center">❌ 当前无法触发技能</div>`;
-            }
-        }
-
-        function adoptCombination(usedNumbers) {
-            const countMap = new Map(); selectedNumbers.forEach(n => countMap.set(n, (countMap.get(n)||0)+1));
-            usedNumbers.forEach(n => { if(countMap.has(n)) countMap.set(n, Math.max(countMap.get(n)-1, 0)); });
-            const remaining = []; countMap.forEach((c, n) => { for(let i=0;i<c;i++) remaining.push(n); });
-            if(currentIndex < historyStack.length-1) historyStack = historyStack.slice(0, currentIndex+1);
-            historyStack.push(remaining);
-            if(historyStack.length > MAX_HISTORY_LENGTH) { historyStack.shift(); currentIndex = Math.max(currentIndex-1, -1); }
-            currentIndex = historyStack.length-1; selectedNumbers = remaining;
-            updateDisplay(); calculate();
-        }
-
-        function addFang(point) {
-            if (selectedNumbers.length >= MAX_FANG) { alert(`最多只能添加 ${MAX_FANG} 张方牌`); return; }
-            const ns = [...selectedNumbers, point];
-            if(currentIndex < historyStack.length-1) historyStack = historyStack.slice(0, currentIndex+1);
-            historyStack.push(ns); currentIndex = historyStack.length-1; selectedNumbers = ns;
-            updateDisplay(); calculate();
-        }
-
-        function init() {
-            document.querySelectorAll('.poker-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    this.style.transform = 'scale(0.92)'; setTimeout(()=>this.style.transform='', 100);
-                    addFang(parseInt(this.dataset.value));
-                });
-            });
-            document.getElementById('clearBtn').addEventListener('click', ()=>{ selectedNumbers = []; historyStack = []; currentIndex = -1; updateDisplay(); calculate(); });
-            document.getElementById('undoBtn').addEventListener('click', ()=>{
-                if(currentIndex > 0) { currentIndex--; selectedNumbers = [...historyStack[currentIndex]]; }
-                else if(currentIndex === 0) { currentIndex = -1; selectedNumbers = []; historyStack = []; }
-                else return;
-                updateDisplay(); calculate();
-            });
-            updateDisplay(); calculate();
-        }
-        document.addEventListener('DOMContentLoaded', init);
-    })();
-</script>
+            renderButtons(); updateDisplay(); computeAndRender();
+        })();
+    </script>
 </body>
 </html>
