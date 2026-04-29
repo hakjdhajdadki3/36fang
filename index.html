@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>方统 · 极简 v9.3.2</title>
+    <title>方统 · 极简 v9.4.2</title>
     <style>
+        /* ========== 全局重置与设计变量 ========== */
         *,
         *::before,
         *::after {
@@ -231,6 +232,13 @@
         .remain-key-col { font-family: 'SF Mono', 'Menlo', monospace; font-size: clamp(0.7rem, 3vw, 0.85rem); color: var(--color-primary); letter-spacing: 0.3px; padding-right: 0; white-space: nowrap; font-weight: 500; }
         .action-col { width: 48px; padding-right: 0; white-space: nowrap; }
 
+        /* ★ 唯一方案时弱化移去方 */
+        .combo-col.single-solution {
+            opacity: 0.3;
+            font-size: clamp(0.7rem, 3vw, 0.8rem);
+            letter-spacing: 0.2px;
+        }
+
         .check-btn {
             width: 42px; height: 42px; border-radius: 21px;
             display: inline-flex; align-items: center; justify-content: center;
@@ -334,11 +342,28 @@
             function buildTableHTML(discardGroups){
                 let html=`<table class="results-table"><thead><tr><th>弃</th><th>移去方</th><th>余</th><th></th></tr></thead><tbody>`;
                 let groupId=0;
-                for(const group of discardGroups){groupId++;const{discard,subsetsWithRemain}=group;const sym=formatPoint(discard),show=subsetsWithRemain.slice(0,8);for(let i=0;i<show.length;i++){const{subset,remainKeys}=show[i];const ss=JSON.stringify(subset).replace(/"/g,'&quot;');html+=`<tr data-group="${groupId}">${i===0?`<td class="discard-col" rowspan="${show.length}">${sym}</td>`:''}<td class="combo-col">${formatSubset(subset)}</td><td class="remain-key-col">${formatKeyDisplay(remainKeys)}</td><td class="action-col"><div class="check-btn" data-discard="${discard}" data-subset="${ss}">✓</div></td></tr>`;}if(subsetsWithRemain.length>8)html+=`<tr data-group="${groupId}"><td class="combo-col" colspan="3" style="opacity:0.7;font-size:0.8rem;padding-top:8px;">… 还有 ${subsetsWithRemain.length-8} 种组合</td><td></td></tr>`;}
+                for(const group of discardGroups){
+                    groupId++;
+                    const{discard,subsetsWithRemain}=group;
+                    const sym=formatPoint(discard);
+                    const show=subsetsWithRemain.slice(0,3);
+                    const isSingle=show.length===1; // ★ 判断是否唯一方案
+                    for(let i=0;i<show.length;i++){
+                        const{subset,remainKeys}=show[i];
+                        const ss=JSON.stringify(subset).replace(/"/g,'&quot;');
+                        const comboClass=isSingle?' class="combo-col single-solution"':' class="combo-col"';
+                        html+=`<tr data-group="${groupId}">${i===0?`<td class="discard-col" rowspan="${show.length}">${sym}</td>`:''}<td${comboClass}>${formatSubset(subset)}</td><td class="remain-key-col">${formatKeyDisplay(remainKeys)}</td><td class="action-col"><div class="check-btn" data-discard="${discard}" data-subset="${ss}">✓</div></td></tr>`;
+                    }
+                }
                 html+=`</tbody></table>`; return html;
             }
 
-            function adoptCombination(discard,subset,btn){if(btn){btn.classList.add('active-feedback');setTimeout(()=>btn.classList.remove('active-feedback'),200);}pushHistory();const nf=[...fangArray];for(const val of subset){const idx=nf.indexOf(val);if(idx!==-1)nf.splice(idx,1);}fangArray=nf;updateDisplay();computeAndRender();}
+            function adoptCombination(discard,subset,btn){
+                if(btn){btn.classList.add('active-feedback');setTimeout(()=>btn.classList.remove('active-feedback'),200);}
+                pushHistory();const nf=[...fangArray];
+                for(const val of subset){const idx=nf.indexOf(val);if(idx!==-1)nf.splice(idx,1);}
+                fangArray=nf;updateDisplay();computeAndRender();
+            }
 
             let currentSelectedGroup=null,currentSelectedDiscard=null;
 
@@ -348,28 +373,18 @@
                 const freqMap=predictionFreq||new Map();
                 const styleId = 'fill-styles';
                 let styleEl = document.getElementById(styleId);
-                if (!styleEl) {
-                    styleEl = document.createElement('style');
-                    styleEl.id = styleId;
-                    document.head.appendChild(styleEl);
-                }
+                if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = styleId; document.head.appendChild(styleEl); }
                 let cssRules = '';
                 allButtons.forEach(btn=>{
                     if(btn.classList.contains('undo-btn')) return;
                     const point=parseInt(btn.dataset.point,10);
                     btn.classList.remove('key-available','key-unavailable','key-selected');
                     const freq=freqMap.get(point)||0;
-                    const pct=freq/13;
-                    const fillHeight = pct * 100;
+                    const fillHeight = (freq/13)*100;
                     cssRules += `.grid-btn[data-point="${point}"]::before { height: ${fillHeight}%; }`;
-                    
-                    if(selectedDiscard!==null&&point===selectedDiscard){
-                        btn.classList.add('key-selected');
-                    } else if(keySet.has(point)){
-                        btn.classList.add('key-available');
-                    } else {
-                        btn.classList.add('key-unavailable');
-                    }
+                    if(selectedDiscard!==null&&point===selectedDiscard){btn.classList.add('key-selected');}
+                    else if(keySet.has(point)){btn.classList.add('key-available');}
+                    else{btn.classList.add('key-unavailable');}
                 });
                 styleEl.textContent = cssRules;
             }
@@ -381,7 +396,8 @@
                     allButtons.forEach(btn=>{if(btn.classList.contains('undo-btn')) return;btn.classList.remove('key-available','key-unavailable','key-selected');});
                     const styleEl = document.getElementById('fill-styles');
                     if (styleEl) styleEl.textContent = '';
-                    currentSelectedGroup=null;currentSelectedDiscard=null;return;
+                    currentSelectedGroup=null;currentSelectedDiscard=null;
+                    return;
                 }
                 const{discardGroups,currentKeys}=computeKeyAndGroups(fangArray);
                 const freq=computePrediction(fangArray,new Set(currentKeys));
