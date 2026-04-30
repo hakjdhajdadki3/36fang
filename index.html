@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>方统 · 极简 v10.0.0</title>
+    <title>方统 · 极简 v10.1.0</title>
     <style>
-        /* ========== 全局重置与设计变量 ========== */
         *,
         *::before,
         *::after {
@@ -32,9 +31,6 @@
             --transition-smooth: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
             --transition-quick: all 0.08s;
             --transition-fill: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            --radius-lg: 40px;
-            --radius-md: 30px;
-            --radius-sm: 24px;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -75,7 +71,7 @@
             width: 100%;
             background: var(--bg-card);
             backdrop-filter: blur(60px) saturate(180%);
-            border-radius: var(--radius-lg);
+            border-radius: 36px; /* 卡片级超椭圆 */
             box-shadow: var(--shadow-card);
             padding: 32px 24px 34px;
             transition: background 0.4s ease, box-shadow 0.3s ease;
@@ -103,7 +99,7 @@
             font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
             background: var(--bg-input);
             border: none;
-            border-radius: var(--radius-md);
+            border-radius: 22px; /* 超椭圆方区 */
             color: var(--color-text);
             letter-spacing: 1.5px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
@@ -134,7 +130,7 @@
             color: var(--color-text);
             font-size: clamp(0.9rem, 4vw, 1.25rem);
             font-weight: 520;
-            border-radius: var(--radius-sm);
+            border-radius: 18px; /* 按钮级超椭圆 */
             transition: var(--transition-smooth);
             display: flex;
             align-items: center;
@@ -159,7 +155,7 @@
             height: 0%;
             background: var(--color-primary);
             opacity: 0.12;
-            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+            border-radius: 0 0 18px 18px;
             z-index: 0;
             transition: var(--transition-fill), opacity 0.3s ease;
         }
